@@ -21,6 +21,10 @@ This plugin requires Paid Memberships Pro to function.
 1. Change the expiration date on the edit levels and edit discount code pages.
 
 == Changelog ==
+= .4.1 =
+* https://d2ffutrenqvap3.cloudfront.net/items/1U1l1k1R1g400c3P1P44/Screen%20Recording%202018-01-20%20at%2006.51%20PM.gif?v=2a83491b
+= .4 =
+* Enhancement: Added a Welcome Page
 = .3 =
 * BUG: Fixed bug when using PayPal Standard.
 * BUG: Fixed bug with dates near the end of the month.
