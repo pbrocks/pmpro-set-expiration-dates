@@ -26,7 +26,7 @@ function pmprosed_pmpro_membership_level_after_other_settings() {
 	} else {
 		$set_expiration_date = '';
 	}
-	?>
+	?><a name="set-expiration-date-profile"></a>
 	<h3 class="topborder">Set Expiration Date</h3>
 	<p>To have this level expire on a specific date, enter it below in YYYY-MM-DD format. <strong>Note:</strong> You
 		must also set an expiration date above (e.g. 1 Year) which will be overwritten by the value below.</p>
@@ -62,8 +62,8 @@ function pmprosed_fixDate( $set_expiration_date ) {
 	$set_expiration_date = strtoupper( $set_expiration_date );
 
 	// vars to tell us which placeholders are being used
-	$has_M = (strpos( $set_expiration_date, 'M' ) !== false);
-	$has_Y = (strpos( $set_expiration_date, 'Y' ) !== false);
+	$has_M = ( strpos( $set_expiration_date, 'M' ) !== false );
+	$has_Y = ( strpos( $set_expiration_date, 'Y' ) !== false );
 
 	$Y = date( 'Y', current_time( 'timestamp' ) );
 	$Y2 = intval( $Y ) + 1;
@@ -138,7 +138,7 @@ function pmprosed_pmpro_checkout_level( $level, $discount_code_id = null ) {
 		$todays_date = time();
 		$time_left = strtotime( $set_expiration_date ) - $todays_date;
 		if ( $time_left > 0 ) {
-			$days_left = ceil( $time_left / (60 * 60 * 24) );
+			$days_left = ceil( $time_left / ( 60 * 60 * 24 ) );
 
 			// update number and period
 			$level->expiration_number = $days_left;
@@ -153,7 +153,7 @@ function pmprosed_pmpro_checkout_level( $level, $discount_code_id = null ) {
 
 			// how many days until expiration
 			$time_left = strtotime( $set_expiration_date ) - $todays_date;
-			$days_left = ceil( $time_left / (60 * 60 * 24) );
+			$days_left = ceil( $time_left / ( 60 * 60 * 24 ) );
 
 			// update number and period
 			$level->expiration_number = $days_left;
