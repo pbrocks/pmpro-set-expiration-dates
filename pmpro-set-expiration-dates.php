@@ -1,14 +1,31 @@
 <?php
 /**
  * Plugin Name: Paid Memberships Pro - Set Expiration Dates Add On
- * Plugin URI: http://www.paidmembershipspro.com/wp/pmpro-set-expiration-dates/
- * Description: Set a specific expiration date (e.g. 2013-12-31) for a PMPro membership level or discount code.
- * Version: .3
+ * Plugin URI: https://www.paidmembershipspro.com/add-ons/pmpro-set-expiration-dates/
+ * Description: Set a specific expiration date (e.g. 2018-12-31) for a PMPro membership level or discount code.
+ * Version: .3.1
  * Author: Stranger Studios
- * Author URI: http://www.strangerstudios.com
+ * Author URI: https://www.strangerstudios.com
  */
 
+/**
+ * Add & save our fields on the edit membership levels page
+ */
+add_action( 'pmpro_membership_level_after_other_settings', 'pmprosed_pmpro_membership_level_after_other_settings' );
+add_action( 'pmpro_discount_code_after_level_settings', 'pmprosed_pmpro_discount_code_after_level_settings', 10, 2 );
+add_action( 'pmpro_save_membership_level', 'pmprosed_pmpro_save_membership_level' );
+/**
+ * Update expiration date of level at checkout.
+ */
+add_filter( 'pmpro_checkout_level', 'pmprosed_pmpro_checkout_level' );
+add_filter( 'pmpro_discount_code_level', 'pmprosed_pmpro_checkout_level', 10, 2 );
+add_filter( 'pmpro_ipnhandler_level', 'pmprosed_pmpro_checkout_level' );
 
+// save level cost text for the code when the code is saved/added
+add_action( 'pmpro_save_discount_code_level', 'pmprosed_pmpro_save_discount_code_level', 10, 2 );
+
+add_filter( 'plugin_row_meta', 'pmprosed_plugin_row_meta', 10, 2 );
+add_filter( 'pmpro_level_expiration_text', 'pmprosed_pmpro_level_expiration_text', 10, 2 );
 /**
  * This first set of functions adds our fields to the edit membership levels page
  */
@@ -20,7 +37,7 @@ function pmprosed_pmpro_membership_level_after_other_settings() {
 	} else {
 		$set_expiration_date = '';
 	}
-	?>
+	?><a name="set-expiration-date-profile"></a>
 	<h3 class="topborder">Set Expiration Date</h3>
 	<p>To have this level expire on a specific date, enter it below in YYYY-MM-DD format. <strong>Note:</strong> You
 		must also set an expiration date above (e.g. 1 Year) which will be overwritten by the value below.</p>
@@ -40,13 +57,11 @@ function pmprosed_pmpro_membership_level_after_other_settings() {
 	</table>
 	<?php
 }
-add_action( 'pmpro_membership_level_after_other_settings', 'pmprosed_pmpro_membership_level_after_other_settings' );
 
 // save level cost text when the level is saved/added
 function pmprosed_pmpro_save_membership_level( $level_id ) {
 	pmpro_saveSetExpirationDate( $level_id, $_REQUEST['set_expiration_date'] );            // add level cost text for this level
 }
-add_action( 'pmpro_save_membership_level', 'pmprosed_pmpro_save_membership_level' );
 
 /**
  * Function to replace Y and M/etc with actual dates
@@ -164,9 +179,6 @@ function pmprosed_pmpro_checkout_level( $level, $discount_code_id = null ) {
 
 	return $level;    // no change
 }
-add_filter( 'pmpro_checkout_level', 'pmprosed_pmpro_checkout_level' );
-add_filter( 'pmpro_discount_code_level', 'pmprosed_pmpro_checkout_level', 10, 2 );
-add_filter( 'pmpro_ipnhandler_level', 'pmprosed_pmpro_checkout_level' );
 
 /**
  * This function will save a the set expiration dates into wp_options.
@@ -222,19 +234,17 @@ function pmprosed_pmpro_discount_code_after_level_settings( $code_id, $level ) {
 	</table>
 	<?php
 }
-add_action( 'pmpro_discount_code_after_level_settings', 'pmprosed_pmpro_discount_code_after_level_settings', 10, 2 );
 
 // save level cost text for the code when the code is saved/added
 function pmprosed_pmpro_save_discount_code_level( $code_id, $level_id ) {
-	$all_levels_a = $_REQUEST['all_levels'];                            // array of level ids checked for this code
-	$set_expiration_date_a = $_REQUEST['set_expiration_date'];            // expiration dates for levels checked
+	$all_levels_a = $_REQUEST['all_levels']; // array of level ids checked for this code
+	$set_expiration_date_a = $_REQUEST['set_expiration_date']; // expiration dates for levels checked
 
 	if ( ! empty( $all_levels_a ) ) {
-		$key = array_search( $level_id, $all_levels_a );                // which level is it in the list?
+		$key = array_search( $level_id, $all_levels_a ); // which level is it in the list?
 		pmpro_saveSetExpirationDate( $level_id, $set_expiration_date_a[ $key ], $code_id );
 	}
 }
-add_action( 'pmpro_save_discount_code_level', 'pmprosed_pmpro_save_discount_code_level', 10, 2 );
 
 /**
  * Function to add links to the plugin row meta
@@ -242,14 +252,13 @@ add_action( 'pmpro_save_discount_code_level', 'pmprosed_pmpro_save_discount_code
 function pmprosed_plugin_row_meta( $links, $file ) {
 	if ( strpos( $file, 'pmpro-set-expiration-dates.php' ) !== false ) {
 		$new_links = array(
-			'<a href="' . esc_url( 'http://www.paidmembershipspro.com/add-ons/plugins-on-github/pmpro-expiration-date/' ) . '" title="' . esc_attr( __( 'View Documentation', 'pmpro' ) ) . '">' . __( 'Docs', 'pmpro' ) . '</a>',
-			'<a href="' . esc_url( 'http://paidmembershipspro.com/support/' ) . '" title="' . esc_attr( __( 'Visit Customer Support Forum', 'pmpro' ) ) . '">' . __( 'Support', 'pmpro' ) . '</a>',
+			'<a href="' . esc_url( 'https://www.paidmembershipspro.com/add-ons/plugins-on-github/pmpro-expiration-date/' ) . '" title="' . esc_attr( __( 'View Documentation', 'pmpro' ) ) . '">' . __( 'Docs', 'pmpro' ) . '</a>',
+			'<a href="' . esc_url( 'https://paidmembershipspro.com/support/' ) . '" title="' . esc_attr( __( 'Visit Customer Support Forum', 'pmpro' ) ) . '">' . __( 'Support', 'pmpro' ) . '</a>',
 		);
 		$links = array_merge( $links, $new_links );
 	}
 	return $links;
 }
-add_filter( 'plugin_row_meta', 'pmprosed_plugin_row_meta', 10, 2 );
 
 /**
  * Update expiration text on levels page.
@@ -264,4 +273,3 @@ function pmprosed_pmpro_level_expiration_text( $expiration_text, $level ) {
 
 	return $expiration_text;
 }
-add_filter( 'pmpro_level_expiration_text', 'pmprosed_pmpro_level_expiration_text', 10, 2 );
